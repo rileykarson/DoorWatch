@@ -1,13 +1,22 @@
 package ca.queensu.doorwatch;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.squareup.okhttp.*;
+
+import java.io.IOException;
 
 //lol
 
@@ -50,5 +59,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override protected Void doInBackground(Void... params) {
+                    OkHttpClient client = new OkHttpClient();
+                    String url = "http://app.walklyapp.com/users/123";
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .build();
+                    String str;
+                    try {
+                        Response res = client.newCall(request).execute();
+                        str = res.body().string();
+                    } catch (IOException e) {
+                        str = "lol david smells";
+                    }
+                Log.i(str, str);
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
     }
 }
