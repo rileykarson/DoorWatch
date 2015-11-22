@@ -12,13 +12,15 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.okhttp.*;
 
-import java.io.IOException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-//lol
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,17 +30,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -60,28 +53,61 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
+*/
     @Override
     protected void onStart() {
         super.onStart();
+        updateDoorStatus();
+    }
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override protected Void doInBackground(Void... params) {
-                    OkHttpClient client = new OkHttpClient();
-                    String url = "http://app.walklyapp.com/users/123";
-                    Request request = new Request.Builder()
-                            .url(url)
-                            .build();
-                    String str;
-                    try {
-                        Response res = client.newCall(request).execute();
-                        str = res.body().string();
-                    } catch (IOException e) {
-                        str = "lol david smells";
-                    }
-                Log.i(str, str);
-                return null;
+    private void updateDoorStatus() {
+        new AsyncTask<Void, Void, String>() {
+            @Override protected String doInBackground(Void... params) {
+                OkHttpClient client = new OkHttpClient();
+                String url = "http://cindygao.me:8000";
+                Request request = new Request.Builder()
+                        .url(url)
+                        .build();
+                String str;
+                try {
+                    Response res = client.newCall(request).execute();
+                    str = res.body().string();
+                } catch (IOException e) {
+                    str = "lol david smells";
+                }
+                return str;
+            }
+            @Override protected void onPostExecute(String result) {
+                TextView door_status = (TextView)findViewById(R.id.door_status);
+                TextView update_time = (TextView)findViewById(R.id.update_time);
+                CiscResponse resp = getResultResponse(result);
+                door_status.setText(resp.message);
+                update_time.setText(resp.lastUpdate);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+    }
+
+    private CiscResponse getResultResponse(String result) {
+        CiscResponse resp = new CiscResponse();
+        try {
+            JSONObject res = new JSONObject(result);
+            String status = res.getString("door");
+            String date = res.getString("time");
+            if (status == "1") {
+                resp.message = "The door is open.";
+            } else {
+                resp.message = "The door is closed.";
+            }
+            resp.lastUpdate = date;
+            return resp;
+        } catch (JSONException ex) {
+            resp.message = "Server Failed";
+            resp.lastUpdate = "N/A";
+            return resp;
+        }
+    }
+    private class CiscResponse {
+        String message;
+        String lastUpdate;
     }
 }
