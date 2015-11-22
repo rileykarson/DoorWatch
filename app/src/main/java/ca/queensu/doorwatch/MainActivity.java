@@ -21,6 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        updateDoorStatus();
+        doSomethingRepeatedly();
     }
 
     private void updateDoorStatus() {
@@ -109,5 +111,23 @@ public class MainActivity extends AppCompatActivity {
     private class CiscResponse {
         String message;
         String lastUpdate;
+    }
+
+    //Every 10000 ms
+    private void doSomethingRepeatedly() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate( new TimerTask() {
+            public void run() {
+
+                try{
+                    updateDoorStatus();
+
+                }
+                catch (Exception e) {
+                    // TODO: handle exception
+                }
+
+            }
+        }, 0, 10000);
     }
 }
