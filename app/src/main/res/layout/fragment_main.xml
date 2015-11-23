@@ -12,7 +12,7 @@
         android:id="@+id/card_view"
         android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="128dp"
+        android:layout_height="150dp"
         card_view:contentPaddingLeft="20dp"
         card_view:contentPaddingRight="@dimen/activity_horizontal_margin"
         card_view:contentPaddingTop="20dp"
@@ -23,34 +23,39 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView android:text="Awaiting response from server."
-                android:layout_width="match_parent"
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_toRightOf="@+id/door_status"
+                android:id="@+id/imageView"
+                android:src="@drawable/closed42"
+                android:layout_alignParentRight="true" />
+
+            <TextView android:text="Awaiting response."
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/door_status"
                 android:textColor="#000000"
                 android:textSize="22sp" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/door_status"
-                android:layout_marginTop="20dp">
+                android:text="Last Update:"
+                android:id="@+id/textView"
+                android:layout_marginTop="32dp"
+                android:textSize="9sp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Last Updated:"
-                    android:id="@+id/textView"
-                    android:layout_marginLeft="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView"
+                android:text="N/A"
+                android:id="@+id/update_time"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="16dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="N/A"
-                    android:id="@+id/update_time"
-                    android:layout_marginLeft="8dp"/>
-            </LinearLayout>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

@@ -33,33 +33,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-*/
     @Override
     protected void onStart() {
         super.onStart();
-        doSomethingRepeatedly();
+        // Async
+        pollServer();
     }
 
     private void updateDoorStatus() {
@@ -95,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             JSONObject res = new JSONObject(result);
             String status = res.getString("door");
             String date = res.getString("time");
-            if (status == "1") {
+            if (status.equals("1")) {
                 resp.message = "The door is open.";
             } else {
                 resp.message = "The door is closed.";
@@ -113,20 +92,11 @@ public class MainActivity extends AppCompatActivity {
         String lastUpdate;
     }
 
-    //Every 10000 ms
-    private void doSomethingRepeatedly() {
+    private void pollServer() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate( new TimerTask() {
             public void run() {
-
-                try{
-                    updateDoorStatus();
-
-                }
-                catch (Exception e) {
-                    // TODO: handle exception
-                }
-
+                updateDoorStatus();
             }
         }, 0, 10000);
     }
